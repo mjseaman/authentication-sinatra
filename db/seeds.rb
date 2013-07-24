@@ -9,3 +9,11 @@ require 'faker'
 # 5.times do
 #   User.create :name => Faker::Name.name, :email => Faker::Internet.email, :password => 'password'
 # end
+
+20.times do 
+	User.create(
+		name: Faker::Name.first_name
+		email: Faker::Internet.email
+		password: Faker::Lorem.words(1)
+		)
+end

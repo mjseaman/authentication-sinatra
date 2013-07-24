@@ -1,6 +1,7 @@
 get '/' do
-  # render home page
- #TODO: Show all users if user is signed in
+	# session.clear
+  @users = User.all
+  p @users
   erb :index
 end
 
@@ -12,20 +13,39 @@ get '/sessions/new' do
 end
 
 post '/sessions' do
-  # sign-in
+	@user = login(params)
+	if @user
+  	session[:current_user] = @user
+  	redirect '/'
+  else
+  	@error = "Incorrect username or password"
+  	erb :sign_in
+  end
 end
 
 delete '/sessions/:id' do
-  # sign-out -- invoked via AJAX
+	session.clear
+	redirect '/'
 end
 
 #----------- USERS -----------
 
 get '/users/new' do
-  # render sign-up page
-  erb :sign_up
+	erb :sign_up
 end
 
 post '/users' do
-  # sign-up a new user
+  @user = User.create(params)
+  p User.all
+  p "in user create"
+  if !@user.errors.any? 
+    p "creating session"
+    p "successfully created user #{@user.name}"
+    create_session(@user)
+    p session
+  else
+  	p "Errors creating user: #{@user.errors.full_messages}"
+  	@error = @user.errors.full_messages
+  end
+  redirect '/'
 end
